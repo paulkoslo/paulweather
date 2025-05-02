@@ -1,0 +1,48 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background: #e0f7fa;
+}
+.container {
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+#weather {
+  margin-top: 1rem;
+}
+.error {
+  color: red;
+}
+/* Forecast list styling */
+#forecast {
+  margin-top: 1rem;
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+.forecast-card {
+  min-width: 100px;
+  background: #fafafa;
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  text-align: center;
+}
+.forecast-card:last-child {
+  margin-right: 0;
+}
+.forecast-date {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.forecast-temp {
+  margin: 0.25rem 0;
+}
