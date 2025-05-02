@@ -39,7 +39,7 @@ function displayWeather(weather) {
   `;
 }
 
-// Display forecast for upcoming days
+// Modify the displayForecast function to include Aperol chance calculation
 function displayForecast(daily) {
   const forecastDiv = document.getElementById('forecast');
   forecastDiv.innerHTML = '';
@@ -48,6 +48,11 @@ function displayForecast(daily) {
     const date = daily.time[i];
     const max = daily.temperature_2m_max[i];
     const min = daily.temperature_2m_min[i];
+
+    // Calculate Aperol chance based on temperature
+    const averageTemp = (max + min) / 2;
+    const aperolChance = Math.max(1, Math.round((averageTemp - 3) / 2)); // Ensure at least 1 Aperol
+
     const card = document.createElement('div');
     card.className = 'forecast-card';
     const dt = new Date(date);
@@ -57,6 +62,7 @@ function displayForecast(daily) {
       <p class="forecast-date">${dateStr}</p>
       <p class="forecast-temp">High: ${max}°C</p>
       <p class="forecast-temp">Low: ${min}°C</p>
+      <p class="forecast-aperol">Aperol Chance: ${aperolChance}</p>
     `;
     forecastDiv.appendChild(card);
   }

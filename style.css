@@ -46,3 +46,9 @@ body {
 .forecast-temp {
   margin: 0.25rem 0;
 }
+/* Styling for Aperol chance */
+.forecast-aperol {
+  font-style: italic;
+  color: #ff5722;
+  margin-top: 0.25rem;
+}
