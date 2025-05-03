@@ -52,3 +52,52 @@ body {
   color: #ff5722;
   margin-top: 0.25rem;
 }
+/* Mobile responsive styles */
+@media (max-width: 600px) {
+  /* Allow content to start from top on small screens */
+  body {
+    align-items: flex-start;
+    padding: 1rem 0.5rem;
+    height: auto;
+  }
+  .container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 1rem;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  /* Adjust headings for mobile */
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  #location {
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+  /* Stack forecast cards vertically */
+  #forecast {
+    display: flex;
+    flex-direction: column;
+    overflow-x: visible;
+    padding-bottom: 0;
+  }
+  .forecast-card {
+    width: 100%;
+    min-width: auto;
+    margin: 0 0 1rem 0;
+  }
+  /* Slightly smaller text for weather details */
+  #weather p,
+  .forecast-date,
+  .forecast-temp,
+  .forecast-aperol {
+    font-size: 0.9rem;
+  }
+}
