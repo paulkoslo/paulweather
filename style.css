@@ -9,7 +9,7 @@ body {
 }
 .container {
   text-align: center;
-  background: white;
+  background: rgba(255, 255, 255, 0.8); /* Make the background more transparent */
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
