@@ -100,3 +100,31 @@ window.addEventListener('load', () => {
     showError('Geolocation is not supported by your browser.');
   }
 });
+
+// Add trippy mode functionality
+function enableTrippyMode() {
+  const body = document.body;
+  let hue = 0;
+  const interval = setInterval(() => {
+    hue = (hue + 10) % 360;
+    body.style.background = `hsl(${hue}, 100%, 50%)`;
+    body.style.backgroundImage = `radial-gradient(circle, hsl(${(hue + 60) % 360}, 100%, 50%), hsl(${(hue + 120) % 360}, 100%, 50%))`;
+  }, 100);
+
+  // Disable trippy mode when button is clicked again
+  const button = document.getElementById('trippy-mode');
+  button.textContent = 'Disable Trippy Mode';
+  button.onclick = () => {
+    clearInterval(interval);
+    body.style.background = '#e0f7fa'; // Reset to original background
+    body.style.backgroundImage = 'none';
+    button.textContent = 'Trippy Mode';
+    button.onclick = enableTrippyMode;
+  };
+}
+
+// Attach event listener to the button
+const trippyButton = document.getElementById('trippy-mode');
+if (trippyButton) {
+  trippyButton.addEventListener('click', enableTrippyMode);
+}
