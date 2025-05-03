@@ -99,6 +99,7 @@ function showError(message) {
   if (forecastDiv) forecastDiv.innerHTML = '';
 }
 
+// Ensure UV index data is correctly passed to displayWeather
 window.addEventListener('load', () => {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(async (position) => {
