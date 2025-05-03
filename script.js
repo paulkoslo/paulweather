@@ -30,7 +30,7 @@ async function fetchWeatherData(lat, lon) {
   }
   return await response.json();
 }
-// Classify UV index into cancer risk category
+// Classify UV index into böckchen risk category
 function classifyUVRisk(uv) {
   if (uv == null) return 'Unknown';
   if (uv <= 2) return 'Low';
@@ -40,7 +40,7 @@ function classifyUVRisk(uv) {
   return 'Extreme';
 }
 
-// Display current weather with UV index and cancer risk
+// Display current weather with UV index and böckchen risk
 function displayWeather(weather, hourlyData) {
   const weatherDiv = document.getElementById('weather');
   // Extract UV index for current time
@@ -55,7 +55,7 @@ function displayWeather(weather, hourlyData) {
     <p>Temperature: ${weather.temperature}°C</p>
     <p>Wind Speed: ${weather.windspeed} km/h</p>
     <p>Wind Direction: ${weather.winddirection}°</p>
-    <p class="uv-info">UV Index: ${uvText} (${uvRisk} cancer risk)</p>
+    <p class="uv-info">UV Index: ${uvText} (${uvRisk} böckchen risk)</p>
   `;
 }
 
@@ -85,7 +85,7 @@ function displayForecast(daily) {
       <p class="forecast-temp">High: ${max}°C</p>
       <p class="forecast-temp">Low: ${min}°C</p>
       <p class="forecast-aperol">Aperol Chance: ${aperolChance}</p>
-      <p class="forecast-uv">UV Index: ${uvMax} (${uvRisk} cancer risk)</p>
+      <p class="forecast-uv">UV Index: ${uvMax} (${uvRisk} böckchen risk)</p>
     `;
     forecastDiv.appendChild(card);
   }
