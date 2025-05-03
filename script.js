@@ -20,7 +20,9 @@ async function fetchLocationName(lat, lon) {
 // Fetch current weather and daily forecast
 async function fetchWeatherData(lat, lon) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-              `&current_weather=true&daily=temperature_2m_max,temperature_2m_min` +
+              `&current_weather=true` +
+              `&hourly=uv_index` +
+              `&daily=temperature_2m_max,temperature_2m_min,uv_index_max` +
               `&timezone=auto&temperature_unit=celsius&windspeed_unit=kmh`;
   const response = await fetch(url);
   if (!response.ok) {
@@ -28,14 +30,32 @@ async function fetchWeatherData(lat, lon) {
   }
   return await response.json();
 }
+// Classify UV index into cancer risk category
+function classifyUVRisk(uv) {
+  if (uv == null) return 'Unknown';
+  if (uv <= 2) return 'Low';
+  if (uv <= 5) return 'Moderate';
+  if (uv <= 7) return 'High';
+  if (uv <= 10) return 'Very High';
+  return 'Extreme';
+}
 
-// Display current weather
-function displayWeather(weather) {
+// Display current weather with UV index and cancer risk
+function displayWeather(weather, hourlyData) {
   const weatherDiv = document.getElementById('weather');
+  // Extract UV index for current time
+  let uvIndex = null;
+  if (hourlyData && hourlyData.time && hourlyData.uv_index) {
+    const idx = hourlyData.time.findIndex(t => t === weather.time);
+    if (idx !== -1) uvIndex = hourlyData.uv_index[idx];
+  }
+  const uvText = uvIndex != null ? uvIndex : 'N/A';
+  const uvRisk = uvIndex != null ? classifyUVRisk(uvIndex) : 'Unknown';
   weatherDiv.innerHTML = `
     <p>Temperature: ${weather.temperature}°C</p>
     <p>Wind Speed: ${weather.windspeed} km/h</p>
     <p>Wind Direction: ${weather.winddirection}°</p>
+    <p class="uv-info">UV Index: ${uvText} (${uvRisk} cancer risk)</p>
   `;
 }
 
@@ -58,11 +78,14 @@ function displayForecast(daily) {
     const dt = new Date(date);
     const options = { weekday: 'short', month: 'short', day: 'numeric' };
     const dateStr = dt.toLocaleDateString(undefined, options);
+    const uvMax = daily.uv_index_max[i];
+    const uvRisk = classifyUVRisk(uvMax);
     card.innerHTML = `
       <p class="forecast-date">${dateStr}</p>
       <p class="forecast-temp">High: ${max}°C</p>
       <p class="forecast-temp">Low: ${min}°C</p>
       <p class="forecast-aperol">Aperol Chance: ${aperolChance}</p>
+      <p class="forecast-uv">UV Index: ${uvMax} (${uvRisk} cancer risk)</p>
     `;
     forecastDiv.appendChild(card);
   }
@@ -88,7 +111,7 @@ window.addEventListener('load', () => {
 
         // Fetch weather and forecast
         const data = await fetchWeatherData(latitude, longitude);
-        displayWeather(data.current_weather);
+        displayWeather(data.current_weather, data.hourly);
         displayForecast(data.daily);
       } catch (err) {
         showError(err.message);

@@ -52,6 +52,15 @@ body {
   color: #ff5722;
   margin-top: 0.25rem;
 }
+/* UV index styling */
+.uv-info {
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+.forecast-uv {
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
 /* Mobile responsive styles */
 @media (max-width: 600px) {
   /* Allow content to start from top on small screens */
