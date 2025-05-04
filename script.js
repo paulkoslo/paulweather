@@ -62,6 +62,8 @@ function displayHourly(hourlyData) {
     hourlyDiv.innerHTML = '<p>No hourly data available.</p>';
     return;
   }
+  // Debug hourly data to ensure it is fetched correctly
+  console.log('Hourly Data:', hourlyData);
   const times = hourlyData.time;
   const temps = hourlyData.temperature_2m;
   const codes = hourlyData.weathercode;
