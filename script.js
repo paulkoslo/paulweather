@@ -21,7 +21,7 @@ async function fetchLocationName(lat, lon) {
 async function fetchWeatherData(lat, lon) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
               `&current_weather=true` +
-              `&hourly=uv_index` +
+              `&hourly=uv_index,weathercode,temperature_2m` +
               `&daily=temperature_2m_max,temperature_2m_min,uv_index_max` +
               `&timezone=auto&temperature_unit=celsius&windspeed_unit=kmh`;
   const response = await fetch(url);
@@ -30,7 +30,7 @@ async function fetchWeatherData(lat, lon) {
   }
   return await response.json();
 }
-// Classify UV index into böckchen risk category
+// Classify UV index into cancer risk category
 function classifyUVRisk(uv) {
   if (uv == null) return 'Unknown';
   if (uv <= 2) return 'Low';
@@ -39,8 +39,55 @@ function classifyUVRisk(uv) {
   if (uv <= 10) return 'Very High';
   return 'Extreme';
 }
+// Map weather code to icon (emoji)
+function mapWeatherCodeToIcon(code) {
+  const codeMap = {
+    0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
+    45: '🌫️', 48: '🌫️',
+    51: '🌦️', 53: '🌦️', 55: '🌦️',
+    56: '🌧️', 57: '🌧️',
+    61: '🌧️', 63: '🌧️', 65: '🌧️', 66: '🌧️', 67: '🌧️',
+    71: '❄️', 73: '❄️', 75: '❄️', 77: '❄️',
+    80: '🌧️', 81: '🌧️', 82: '🌧️',
+    85: '❄️', 86: '❄️',
+    95: '⛈️', 96: '⛈️', 99: '⛈️'
+  };
+  return codeMap[code] || '❓';
+}
+// Display hourly forecast for the current day
+function displayHourly(hourlyData) {
+  const hourlyDiv = document.getElementById('hourly');
+  hourlyDiv.innerHTML = '';
+  if (!hourlyData || !hourlyData.time) {
+    hourlyDiv.innerHTML = '<p>No hourly data available.</p>';
+    return;
+  }
+  const times = hourlyData.time;
+  const temps = hourlyData.temperature_2m;
+  const codes = hourlyData.weathercode;
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+  const currentHour = now.getHours();
+  for (let i = 0; i < times.length; i++) {
+    const parts = times[i].split('T');
+    const datePart = parts[0];
+    const timePart = parts[1];
+    const hour = parseInt(timePart.split(':')[0], 10);
+    if (datePart !== todayStr || hour < currentHour) continue;
+    const temp = temps[i];
+    const icon = mapWeatherCodeToIcon(codes[i]);
+    const card = document.createElement('div');
+    card.className = 'hourly-card';
+    card.innerHTML = `
+      <p class="hourly-time">${hour}:00</p>
+      <p class="hourly-icon">${icon}</p>
+      <p class="hourly-temp">${temp}°</p>
+    `;
+    hourlyDiv.appendChild(card);
+  }
+}
 
-// Display current weather with UV index and böckchen risk
+// Display current weather with UV index and cancer risk
 function displayWeather(weather, hourlyData) {
   const weatherDiv = document.getElementById('weather');
   // Extract UV index for current time
@@ -55,7 +102,7 @@ function displayWeather(weather, hourlyData) {
     <p>Temperature: ${weather.temperature}°C</p>
     <p>Wind Speed: ${weather.windspeed} km/h</p>
     <p>Wind Direction: ${weather.winddirection}°</p>
-    <p class="uv-info">UV Index: ${uvText} (${uvRisk} böckchen risk)</p>
+    <p class="uv-info">UV Index: ${uvText} (${uvRisk} cancer risk)</p>
   `;
 }
 
@@ -85,7 +132,7 @@ function displayForecast(daily) {
       <p class="forecast-temp">High: ${max}°C</p>
       <p class="forecast-temp">Low: ${min}°C</p>
       <p class="forecast-aperol">Aperol Chance: ${aperolChance}</p>
-      <p class="forecast-uv">UV Index: ${uvMax} (${uvRisk} böckchen risk)</p>
+      <p class="forecast-uv">UV Index: ${uvMax} (${uvRisk} cancer risk)</p>
     `;
     forecastDiv.appendChild(card);
   }
@@ -113,6 +160,7 @@ window.addEventListener('load', () => {
         // Fetch weather and forecast
         const data = await fetchWeatherData(latitude, longitude);
         displayWeather(data.current_weather, data.hourly);
+        displayHourly(data.hourly);
         displayForecast(data.daily);
       } catch (err) {
         showError(err.message);

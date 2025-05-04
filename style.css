@@ -61,6 +61,36 @@ body {
   font-weight: bold;
   margin-top: 0.5rem;
 }
+/* Hourly forecast styling */
+#hourly {
+  margin-top: 1rem;
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+.hourly-card {
+  min-width: 60px;
+  background: #fafafa;
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  text-align: center;
+}
+.hourly-card:last-child {
+  margin-right: 0;
+}
+.hourly-time {
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+.hourly-icon {
+  font-size: 1.2rem;
+}
+.hourly-temp {
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
 /* Mobile responsive styles */
 @media (max-width: 600px) {
   /* Allow content to start from top on small screens */
