@@ -117,11 +117,18 @@ function displayForecast(daily) {
     const date = daily.time[i];
     const max = daily.temperature_2m_max[i];
     const min = daily.temperature_2m_min[i];
+    const weatherCode = daily.weathercode[i];
 
-    // Calculate Aperol chance based on temperature
-    const averageTemp = (max + min) / 2;
-    const aperolChance = Math.min(4, Math.max(1, Math.round((averageTemp - 3) / 2))); // Ensure between 1-4
-    const aperolEmojis = '🍹'.repeat(aperolChance);
+    // Calculate Aperol score based on weather conditions
+    let aperolScore = 1; // Default to 1 for bad weather
+    if (weatherCode <= 3) { // Clear to partly cloudy
+      aperolScore = 4;
+    } else if (weatherCode <= 48) { // Foggy
+      aperolScore = 3;
+    } else if (weatherCode <= 55) { // Light drizzle
+      aperolScore = 2;
+    }
+    const aperolEmojis = '🍹'.repeat(aperolScore);
 
     const card = document.createElement('div');
     card.className = 'forecast-card';
@@ -134,7 +141,7 @@ function displayForecast(daily) {
       <p class="forecast-date">${dateStr}</p>
       <p class="forecast-temp">High: ${max}°C</p>
       <p class="forecast-temp">Low: ${min}°C</p>
-      <p class="forecast-aperol">Aperol Chance: ${aperolEmojis}</p>
+      <p class="forecast-aperol">${aperolEmojis}</p>
       <p class="forecast-uv">UV Index: ${uvMax} (${uvRisk})</p>
     `;
     forecastDiv.appendChild(card);
