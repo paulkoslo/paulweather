@@ -30,14 +30,14 @@ async function fetchWeatherData(lat, lon) {
   }
   return await response.json();
 }
-// Classify UV index into cancer risk category
+// Classify UV index into Böckchenindex category
 function classifyUVRisk(uv) {
   if (uv == null) return 'Unknown';
-  if (uv <= 2) return 'Low';
-  if (uv <= 5) return 'Moderate';
-  if (uv <= 7) return 'High';
-  if (uv <= 10) return 'Very High';
-  return 'Extreme';
+  if (uv <= 2) return 'Böckchenindex: 1';
+  if (uv <= 5) return 'Böckchenindex: 2';
+  if (uv <= 7) return 'Böckchenindex: 3';
+  if (uv <= 10) return 'Böckchenindex: 4';
+  return 'Böckchenindex: 5';
 }
 // Map weather code to icon (emoji)
 function mapWeatherCodeToIcon(code) {
@@ -104,7 +104,7 @@ function displayWeather(weather, hourlyData) {
     <p>Temperature: ${weather.temperature}°C</p>
     <p>Wind Speed: ${weather.windspeed} km/h</p>
     <p>Wind Direction: ${weather.winddirection}°</p>
-    <p class="uv-info">UV Index: ${uvText} (${uvRisk} cancer risk)</p>
+    <p class="uv-info">UV Index: ${uvText} (${uvRisk})</p>
   `;
 }
 
@@ -120,7 +120,8 @@ function displayForecast(daily) {
 
     // Calculate Aperol chance based on temperature
     const averageTemp = (max + min) / 2;
-    const aperolChance = Math.max(1, Math.round((averageTemp - 3) / 2)); // Ensure at least 1 Aperol
+    const aperolChance = Math.min(4, Math.max(1, Math.round((averageTemp - 3) / 2))); // Ensure between 1-4
+    const aperolEmojis = '🍹'.repeat(aperolChance);
 
     const card = document.createElement('div');
     card.className = 'forecast-card';
@@ -133,8 +134,8 @@ function displayForecast(daily) {
       <p class="forecast-date">${dateStr}</p>
       <p class="forecast-temp">High: ${max}°C</p>
       <p class="forecast-temp">Low: ${min}°C</p>
-      <p class="forecast-aperol">Aperol Chance: ${aperolChance}</p>
-      <p class="forecast-uv">UV Index: ${uvMax} (${uvRisk} cancer risk)</p>
+      <p class="forecast-aperol">Aperol Chance: ${aperolEmojis}</p>
+      <p class="forecast-uv">UV Index: ${uvMax} (${uvRisk})</p>
     `;
     forecastDiv.appendChild(card);
   }
@@ -176,29 +177,44 @@ window.addEventListener('load', () => {
 });
 
 // Add trippy mode functionality
+let trippyInterval = null;
+
 function enableTrippyMode() {
   const body = document.body;
   let hue = 0;
-  const interval = setInterval(() => {
+  trippyInterval = setInterval(() => {
     hue = (hue + 10) % 360;
     body.style.background = `hsl(${hue}, 100%, 50%)`;
     body.style.backgroundImage = `radial-gradient(circle, hsl(${(hue + 60) % 360}, 100%, 50%), hsl(${(hue + 120) % 360}, 100%, 50%))`;
   }, 100);
 
-  // Disable trippy mode when button is clicked again
+  // Update button text
   const button = document.getElementById('trippy-mode');
   button.textContent = 'Disable Trippy Mode';
-  button.onclick = () => {
-    clearInterval(interval);
-    body.style.background = '#e0f7fa'; // Reset to original background
-    body.style.backgroundImage = 'none';
-    button.textContent = 'Trippy Mode';
-    button.onclick = enableTrippyMode;
-  };
+}
+
+function disableTrippyMode() {
+  if (trippyInterval) {
+    clearInterval(trippyInterval);
+    trippyInterval = null;
+  }
+  const body = document.body;
+  body.style.background = '#e0f7fa';
+  body.style.backgroundImage = 'none';
+  
+  // Update button text
+  const button = document.getElementById('trippy-mode');
+  button.textContent = 'Trippy Mode';
 }
 
 // Attach event listener to the button
 const trippyButton = document.getElementById('trippy-mode');
 if (trippyButton) {
-  trippyButton.addEventListener('click', enableTrippyMode);
+  trippyButton.addEventListener('click', () => {
+    if (trippyInterval) {
+      disableTrippyMode();
+    } else {
+      enableTrippyMode();
+    }
+  });
 }
