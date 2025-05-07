@@ -68,47 +68,28 @@ body {
   overflow-x: auto;
   padding-bottom: 0.5rem;
 }
-.hourly-scroll-container {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  margin: 20px 0;
-  padding: 10px 0;
-}
-
-.hourly-content-wrapper {
-  display: flex;
-  gap: 20px;
-  transition: transform 0.1s linear;
-  padding: 0 20px;
-}
-
 .hourly-card {
-  flex: 0 0 auto;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 15px;
-  border-radius: 10px;
+  min-width: 60px;
+  background: #fafafa;
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   text-align: center;
-  min-width: 80px;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
+.hourly-card:last-child {
+  margin-right: 0;
+}
 .hourly-time {
-  font-size: 0.9em;
-  margin-bottom: 5px;
-  color: #666;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
 }
-
 .hourly-icon {
-  font-size: 1.5em;
-  margin: 5px 0;
+  font-size: 1.2rem;
 }
-
 .hourly-temp {
-  font-size: 1.1em;
-  font-weight: bold;
-  margin-top: 5px;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
 }
 /* Mobile responsive styles */
 @media (max-width: 600px) {

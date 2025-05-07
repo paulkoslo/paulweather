@@ -62,86 +62,31 @@ function displayHourly(hourlyData) {
     hourlyDiv.innerHTML = '<p>No hourly data available.</p>';
     return;
   }
-
+  // Debug hourly data to ensure it is fetched correctly
+  console.log('Hourly Data:', hourlyData);
   const times = hourlyData.time;
   const temps = hourlyData.temperature_2m;
   const codes = hourlyData.weathercode;
   const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
   const currentHour = now.getHours();
-
-  // Create a container for the scrolling content
-  const scrollContainer = document.createElement('div');
-  scrollContainer.className = 'hourly-scroll-container';
-  
-  // Create the content wrapper
-  const contentWrapper = document.createElement('div');
-  contentWrapper.className = 'hourly-content-wrapper';
-
-  // Show next 48 hours
   for (let i = 0; i < times.length; i++) {
     const parts = times[i].split('T');
+    const datePart = parts[0];
     const timePart = parts[1];
     const hour = parseInt(timePart.split(':')[0], 10);
-    
-    // Skip past hours
-    if (i === 0 && hour < currentHour) continue;
-    
+    if (datePart !== todayStr || hour < currentHour) continue;
     const temp = temps[i];
     const icon = mapWeatherCodeToIcon(codes[i]);
     const card = document.createElement('div');
     card.className = 'hourly-card';
-    
-    // Format the time display
-    let timeDisplay;
-    if (i === 0) {
-      timeDisplay = 'Now';
-    } else if (hour === 0) {
-      timeDisplay = 'Midnight';
-    } else if (hour === 12) {
-      timeDisplay = 'Noon';
-    } else {
-      timeDisplay = `${hour}:00`;
-    }
-
     card.innerHTML = `
-      <p class="hourly-time">${timeDisplay}</p>
+      <p class="hourly-time">${hour}:00</p>
       <p class="hourly-icon">${icon}</p>
       <p class="hourly-temp">${temp}°</p>
     `;
-    contentWrapper.appendChild(card);
+    hourlyDiv.appendChild(card);
   }
-
-  scrollContainer.appendChild(contentWrapper);
-  hourlyDiv.appendChild(scrollContainer);
-
-  // Start auto-scrolling
-  let scrollAmount = 0;
-  const scrollSpeed = 0.5; // pixels per frame
-  const scrollInterval = setInterval(() => {
-    scrollAmount += scrollSpeed;
-    if (scrollAmount >= contentWrapper.scrollWidth - scrollContainer.clientWidth) {
-      scrollAmount = 0;
-    }
-    contentWrapper.style.transform = `translateX(-${scrollAmount}px)`;
-  }, 16); // approximately 60fps
-
-  // Pause scrolling on hover
-  scrollContainer.addEventListener('mouseenter', () => {
-    clearInterval(scrollInterval);
-  });
-
-  // Resume scrolling when mouse leaves
-  scrollContainer.addEventListener('mouseleave', () => {
-    scrollAmount = 0;
-    contentWrapper.style.transform = 'translateX(0)';
-    const newInterval = setInterval(() => {
-      scrollAmount += scrollSpeed;
-      if (scrollAmount >= contentWrapper.scrollWidth - scrollContainer.clientWidth) {
-        scrollAmount = 0;
-      }
-      contentWrapper.style.transform = `translateX(-${scrollAmount}px)`;
-    }, 16);
-  });
 }
 
 // Display current weather with UV index and cancer risk
